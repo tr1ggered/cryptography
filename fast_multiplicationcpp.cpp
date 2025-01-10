@@ -1,39 +1,42 @@
 ﻿#include <iostream>
 #include <limits> // Для работы с максимальными значениями типа
-#include <cmath>  // Для функции sqrt
     using namespace std;
 
-    // Функция быстрого возведения в квадрат с проверкой
-    bool safeSquare(int number, int& result) {
-        if (number > 0 && number > sqrt(numeric_limits<int>::max())) {
-            // Если число слишком большое, чтобы результат помещался в int
-            return false;
+    // Функция для проверки простоты числа
+    bool isPrime(int number) {
+        if (number <= 1) return false;
+        for (int i = 2; i * i <= number; ++i) {
+            if (number % i == 0) return false;
         }
-        if (number < 0 && number < -sqrt(numeric_limits<int>::max())) {
-            // Если отрицательное число слишком большое по модулю
-            return false;
-        }
-        result = number * number; // Вычисление квадрата
         return true;
     }
 
     int main() {
         setlocale(LC_ALL, "Russian");
+
         int num;
 
-        cout << "Введите число: ";
-        while (!(cin >> num)) { // Проверка на некорректный ввод
+        cout << "Введите число для проверки на простоту: ";
+
+        // Проверяем ввод на корректность
+        while (!(cin >> num)) {
             cout << "Ошибка: некорректный ввод. Введите целое число: ";
             cin.clear(); // Сбрасываем флаг ошибки
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищаем буфер ввода
         }
 
-        int result;
-        if (safeSquare(num, result)) {
-            cout << "Квадрат числа " << num << " равен " << result << endl;
+        // Проверяем, чтобы число не было слишком большим для int
+        if (cin.fail() || num > numeric_limits<int>::max() || num < numeric_limits<int>::min()) {
+            cout << "Ошибка: введённое число слишком велико или некорректно." << endl;
+            return 1;
+        }
+
+        // Проверка числа на простоту
+        if (isPrime(num)) {
+            cout << "Число " << num << " является простым." << endl;
         }
         else {
-            cout << "Ошибка: квадрат числа " << num << " слишком большой для хранения в типе int." << endl;
+            cout << "Число " << num << " не является простым." << endl;
         }
 
         return 0;
