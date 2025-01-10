@@ -1,40 +1,40 @@
 ﻿#include <iostream>
-#include <limits> // Для работы с максимальными значениями типа
-#include <cmath>  // Для функции sqrt
-    using namespace std;
+#include <random>
+using namespace std;
 
-    // Функция быстрого возведения в квадрат с проверкой
-    bool safeSquare(int number, int& result) {
-        if (number > 0 && number > sqrt(numeric_limits<int>::max())) {
-            // Если число слишком большое, чтобы результат помещался в int
-            return false;
-        }
-        if (number < 0 && number < -sqrt(numeric_limits<int>::max())) {
-            // Если отрицательное число слишком большое по модулю
-            return false;
-        }
-        result = number * number; // Вычисление квадрата
-        return true;
+// Функция для проверки простоты числа
+bool isPrime(int number) {
+    if (number <= 1) return false;
+    for (int i = 2; i * i <= number; ++i) {
+        if (number % i == 0) return false;
     }
+    return true;
+}
 
-    int main() {
-        setlocale(LC_ALL, "Russian");
-        int num;
+// Функция генерации случайного числа в заданном диапазоне
+int generateRandomNumber(int min, int max) {
+    random_device rd; // Источник энтропии
+    mt19937 gen(rd()); // Генератор случайных чисел
+    uniform_int_distribution<> dist(min, max); // Равномерное распределение
+    return dist(gen);
+}
 
-        cout << "Введите число: ";
-        while (!(cin >> num)) { // Проверка на некорректный ввод
-            cout << "Ошибка: некорректный ввод. Введите целое число: ";
-            cin.clear(); // Сбрасываем флаг ошибки
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищаем буфер ввода
-        }
+// Функция для генерации простого числа
+int generatePrime(int min, int max) {
+    int candidate;
+    do {
+        candidate = generateRandomNumber(min, max);
+    } while (!isPrime(candidate)); // Повторяем, пока не найдём простое число
+    return candidate;
+}
 
-        int result;
-        if (safeSquare(num, result)) {
-            cout << "Квадрат числа " << num << " равен " << result << endl;
-        }
-        else {
-            cout << "Ошибка: квадрат числа " << num << " слишком большой для хранения в типе int." << endl;
-        }
+int main() {
+    setlocale(LC_ALL, "Russian");
+    int min = 100, max = 1000; // Диапазон генерации
 
-        return 0;
-    }
+    cout << "Генерация простого числа в диапазоне от " << min << " до " << max << "..." << endl;
+    int primeNumber = generatePrime(min, max);
+    cout << "Сгенерировано простое число: " << primeNumber << endl;
+
+    return 0;
+}
